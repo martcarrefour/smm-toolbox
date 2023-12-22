@@ -35,6 +35,7 @@ const getComments = async (
     const [POST_ID, OWNER_ID] = linkData;
     const URL = `https://api.vk.com/method/wall.getComments?access_token=${VK_TOKEN}&v=${VERSION}&owner_id=${OWNER_ID}&post_id=${POST_ID}&count=${COUNT}&offset=${OFFSET}`;
     const response = await fetch(URL);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     if (!response.ok) {
       return {

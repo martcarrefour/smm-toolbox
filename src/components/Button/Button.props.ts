@@ -10,4 +10,5 @@ export interface ButtonProps
     HTMLButtonElement
   > {
   children: ReactNode;
+  appearance: "primary" | "ghost" | "accent";
 }

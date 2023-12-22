@@ -4,7 +4,7 @@ import "./globals.css";
 import Link from "next/link";
 import Footer from "@/components/Footer/Footer";
 import Header from "@/components/Header/Header";
-import { Provider } from "@/components/Providers/layout";
+import { Provider } from "@/context/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
