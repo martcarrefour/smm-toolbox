@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { NavLink } from "./NavLink.props";
+import { NavLinkProps } from "./NavLink.props";
 
-const NavLink: React.FC<NavLink> = ({ href, text, className }) => (
+const NavLink: React.FC<NavLinkProps> = ({ href, className, children }) => (
   <Link href={href} className={className}>
-    {text}
+    {children}
   </Link>
 );
 

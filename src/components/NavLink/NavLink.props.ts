@@ -1,7 +1,7 @@
-import { type DetailedHTMLProps, type HTMLAttributes } from "react";
+import { ReactNode, type DetailedHTMLProps, type HTMLAttributes } from "react";
 
-export interface NavLink
+export interface NavLinkProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   href: string;
-  text: string;
+  children: ReactNode;
 }

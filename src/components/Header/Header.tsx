@@ -3,6 +3,8 @@ import NavLink from "../NavLink/NavLink";
 import NavLinks from "../NavLinks/NavLinks";
 import MobileMenu from "../MobileMenu/MobileMenu";
 import { HeaderProps } from "./Header.props";
+import { Button } from "../Button/Button";
+import AuthMenu from "../AuthMenu/AuthMenu";
 
 const links = [
   {
@@ -19,6 +21,8 @@ const Header: React.FC<HeaderProps> = ({ className, ...props }) => (
       <div className="  px-4 md:flex flex flex-wrap justify-between items-center mx-auto">
         <Logo />
         <div className="flex items-center lg:order-2">
+          <AuthMenu />
+
           <MobileMenu />
         </div>
         <div
