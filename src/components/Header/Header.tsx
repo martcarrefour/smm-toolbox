@@ -29,7 +29,10 @@ const Header: React.FC<HeaderProps> = ({ className, ...props }) => (
           className="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1"
           id="mobile-menu-2"
         >
-          <NavLinks links={links} />
+          <NavLinks
+            links={links}
+            className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0"
+          />
         </div>
       </div>
     </nav>

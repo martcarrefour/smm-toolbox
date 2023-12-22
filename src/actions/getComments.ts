@@ -49,3 +49,5 @@ const getComments = async (
     return { comments: undefined, error: "Error fetching comments" };
   }
 };
+
+export default getComments;
