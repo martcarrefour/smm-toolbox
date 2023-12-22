@@ -1,31 +1,50 @@
 "use client";
 import CommentsList from "@/components/CommentsList/CommentsList";
 import getComments from "@/actions/getComments";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/Button/Button";
 import Input from "@/components/Input/Input";
 import { CommentProps } from "@/components/Comment/Comment.props";
+import { useSession } from "next-auth/react";
+import { Session } from "next-auth";
+
+interface User {
+  name?: string | null | undefined;
+  image?: string | null | undefined;
+  vk_token?: string | null | undefined;
+}
+
+// Интерфейс для типизации объекта session
 
 export default function CommentsPage() {
+  const { data: session } = useSession();
   const [comments, setComments] = useState<CommentProps[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
 
   const handleFormSubmit = async (form: FormData) => {
     setLoading(true);
-    const { comments: thisComments, error: thisError } = await getComments(
-      form
-    );
-    setLoading(false);
+    const user: User | undefined = session?.user;
 
-    if (thisError) {
-      setError(thisError);
-      setComments([]);
-      return;
+    if (user?.vk_token) {
+      const { comments: thisComments, error: thisError } = await getComments(
+        form,
+        user.vk_token
+      );
+
+      setLoading(false);
+
+      if (thisError) {
+        setError(thisError);
+        setComments([]);
+        return;
+      }
+
+      setComments(thisComments || []);
+    } else {
+      setLoading(false);
+      setError("User not authenticated");
     }
-
-    setError(undefined);
-    setComments(thisComments || []);
   };
 
   return (
@@ -45,15 +64,13 @@ export default function CommentsPage() {
           </div>
         </div>
       </form>
-
-      {loading && <p>Loading...</p>}
-      {error && <p>Error: {error}</p>}
-      {!loading && !error && comments.length === 0 && (
-        <p>No comments available</p>
-      )}
-      {!loading && !error && comments.length > 0 && (
-        <CommentsList comments={comments} />
-      )}
+      <div className="mt-3">
+        {loading && <p>Loading...</p>}
+        {error && <p className="text-red-400">Error: {error}</p>}
+        {!loading && !error && comments.length > 0 && (
+          <CommentsList comments={comments} />
+        )}
+      </div>
     </>
   );
 }

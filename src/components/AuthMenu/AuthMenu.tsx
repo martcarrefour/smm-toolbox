@@ -31,7 +31,8 @@ const AuthMenu: React.FC<AuthMenuProps> = () => {
           </Link>
         </>
       ) : (
-        <NavLink href={"http://localhost/api/auth/signin"}>
+        //? FIX LINK
+        <NavLink href={"/api/auth/signin"}>
           <Button>Зайти через VK</Button>
         </NavLink>
       )}

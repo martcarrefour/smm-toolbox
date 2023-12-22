@@ -3,7 +3,7 @@
 import { CommentProps } from "@/components/Comment/Comment.props";
 import getOwnerAndPorsId from "@/helpers/vk/getOwnerAndPorsId";
 
-const ACCESS_TOKEN = process.env.ACCESS_TOKEN;
+// const VK_ACCESS_TOKEN = process.env.VK_ACCESS_TOKEN;
 
 const COUNT = 10;
 const DELAY_MS = 1000;
@@ -11,7 +11,8 @@ const VERSION = "5.95";
 const OFFSET = 0;
 
 const getComments = async (
-  form: FormData
+  form: FormData,
+  VK_TOKEN: string
 ): Promise<{
   comments: CommentProps[] | undefined;
   error: string | undefined;
@@ -32,7 +33,7 @@ const getComments = async (
     }
 
     const [POST_ID, OWNER_ID] = linkData;
-    const URL = `https://api.vk.com/method/wall.getComments?access_token=${ACCESS_TOKEN}&v=${VERSION}&owner_id=${OWNER_ID}&post_id=${POST_ID}&count=${COUNT}&offset=${OFFSET}`;
+    const URL = `https://api.vk.com/method/wall.getComments?access_token=${VK_TOKEN}&v=${VERSION}&owner_id=${OWNER_ID}&post_id=${POST_ID}&count=${COUNT}&offset=${OFFSET}`;
     const response = await fetch(URL);
 
     if (!response.ok) {
