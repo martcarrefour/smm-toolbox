@@ -1,12 +1,13 @@
 "use client";
 import CommentsList from "@/components/CommentsList/CommentsList";
 import getComments from "@/actions/getComments";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/Button/Button";
 import Input from "@/components/Input/Input";
 import { CommentProps } from "@/components/Comment/Comment.props";
 import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
+import getCommentsCount from "@/helpers/vk/getCommentsCount";
 
 interface User {
   name?: string | null | undefined;
@@ -14,37 +15,39 @@ interface User {
   vk_token?: string | null | undefined;
 }
 
-// Интерфейс для типизации объекта session
-
 export default function CommentsPage() {
   const { data: session } = useSession();
   const [comments, setComments] = useState<CommentProps[]>([]);
+  const [commentsCount, setCommentsCount] = useState<number>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
 
+  useEffect(() => {
+    console.log("Comments or error has changed:", { comments, error });
+  }, [comments, error]);
+
   const handleFormSubmit = async (form: FormData) => {
+    setError(undefined);
     setLoading(true);
     const user: User | undefined = session?.user;
 
-    if (user?.vk_token) {
-      const { comments: thisComments, error: thisError } = await getComments(
-        form,
-        user.vk_token
-      );
-
-      setLoading(false);
-
-      if (thisError) {
-        setError(thisError);
-        setComments([]);
-        return;
-      }
-
-      setComments(thisComments || []);
-    } else {
+    if (!user?.vk_token) {
       setLoading(false);
       setError("User not authenticated");
+      return;
     }
+    const { comments, error, count } = await getComments(form, user.vk_token);
+
+    setLoading(false);
+
+    if (error) {
+      setError(error);
+      setComments([]);
+      return;
+    }
+
+    setCommentsCount(count);
+    setComments(comments || []);
   };
 
   return (
@@ -65,10 +68,13 @@ export default function CommentsPage() {
         </div>
       </form>
       <div className="mt-3">
-        {loading && <p>Loading...</p>}
-        {error && <p className="text-red-400">Error: {error}</p>}
+        {loading && <p>Загрузка...</p>}
+        {error && <p className="text-red-400">Ошибка: {error}</p>}
         {!loading && !error && comments.length > 0 && (
-          <CommentsList comments={comments} />
+          <>
+            <div>Всего комментариев: {commentsCount}</div>
+            <CommentsList comments={comments} />
+          </>
         )}
       </div>
     </>

@@ -6,7 +6,6 @@ import { Button } from "@/components/Button/Button";
 
 const Profile = () => {
   const session = useSession();
-  console.log(session.data);
 
   return (
     <div className="flex justify-between">

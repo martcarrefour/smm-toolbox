@@ -1,9 +1,8 @@
 "use server";
 
 import { CommentProps } from "@/components/Comment/Comment.props";
+import getCommentsCount from "@/helpers/vk/getCommentsCount";
 import getOwnerAndPorsId from "@/helpers/vk/getOwnerAndPorsId";
-
-// const VK_ACCESS_TOKEN = process.env.VK_ACCESS_TOKEN;
 
 const COUNT = 10;
 const DELAY_MS = 1000;
@@ -16,6 +15,7 @@ const getComments = async (
 ): Promise<{
   comments: CommentProps[] | undefined;
   error: string | undefined;
+  count?: number;
 }> => {
   try {
     const link = String(form.get("link"));
@@ -24,12 +24,12 @@ const getComments = async (
     if (!link.startsWith("https://vk.com/") && !link.startsWith("vk.com/")) {
       return {
         comments: undefined,
-        error: `Wrong Link`,
+        error: "Ссылка должна начинаться с `vk.com/ `",
       };
     }
 
     if (!linkData) {
-      return { comments: undefined, error: "Invalid link format" };
+      return { comments: undefined, error: "Некорректная ссылка" };
     }
 
     const [POST_ID, OWNER_ID] = linkData;
@@ -39,15 +39,25 @@ const getComments = async (
     if (!response.ok) {
       return {
         comments: undefined,
-        error: `Failed to fetch comments. Status: ${response.status}`,
+        error: `Ошибка в получении коммнетариев. Код ошибки: ${response.status}`,
       };
     }
 
     const data = await response.json();
+
+    if (data.error) {
+      console.log(data);
+      return {
+        comments: undefined,
+        error: `${data.error.error_msg}. Код ошибки: ${data.error.error_code}`,
+      };
+    }
+
     const comments = data.response?.items || [];
-    return { comments, error: undefined };
+    const count = data.response?.count;
+    return { comments, error: undefined, count };
   } catch (error) {
-    return { comments: undefined, error: "Error fetching comments" };
+    return { comments: undefined, error: "Ошибка в получении коммнетариев" };
   }
 };
 
