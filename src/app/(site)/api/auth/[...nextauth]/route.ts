@@ -1,6 +1,6 @@
 import NextAuth from "next-auth/next";
 import VkProvider from "next-auth/providers/vk";
-import { Account, AuthOptions, Session, User } from "next-auth";
+import { AuthOptions, Session } from "next-auth";
 import { JWT } from "next-auth/jwt";
 
 type MyUser = {
@@ -21,10 +21,13 @@ const authOptions: AuthOptions = {
     VkProvider({
       clientId: process.env.VK_CLIENT_ID as string,
       clientSecret: process.env.VK_CLIENT_SECRET as string,
+      // scope: "groups,friends",
+      //? Настроить "ограниченные права"
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
-  debug: false,
+
+  useSecureCookies: process.env.ENV === "dev" ? false : true,
   callbacks: {
     async jwt({ token, user, account }) {
       if (user) {
